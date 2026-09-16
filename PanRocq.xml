@@ -1,0 +1,409 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE language SYSTEM "language.dtd">
+<!--
+  KDE XML syntax definition for Rocq.
+  Converted from Rocq.sublime-syntax for use with Pandoc/Quarto.
+  Original Rocq.sublime-syntax file available at
+    https://github.com/mattam82/rocq-sublime
+    (Copyright (c) Matthieu Sozeau 2025, MIT License)
+
+  Rules are tried in order; the first match wins.
+  defStyleNum values map to Pandoc JSON theme token types:
+    dsKeyword      -> Keyword
+    dsControlFlow  -> ControlFlow
+    dsDataType     -> DataType
+    dsConstant     -> Constant
+    dsFunction     -> Function
+    dsBuiltIn      -> BuiltIn
+    dsDecVal       -> DecVal
+    dsString       -> String
+    dsSpecialChar  -> SpecialChar
+    dsComment      -> Comment
+-->
+<language name="Rocq" version="1" section="Sources"
+          extensions="*.v" mimetype="text/x-rocq" casesensitive="true"
+          author="Converted from Rocq.sublime-syntax" license="MIT">
+  <highlighting>
+
+    <!-- ============================================================ -->
+    <!-- Keyword lists                                                 -->
+    <!-- ============================================================ -->
+
+    <!-- Definition-introducing vernacular commands (directly followed by a name) -->
+    <list name="kw_definition">
+      <item>Theorem</item>
+      <item>Lemma</item>
+      <item>Remark</item>
+      <item>Fact</item>
+      <item>Corollary</item>
+      <item>Proposition</item>
+      <item>Example</item>
+      <item>Let</item>
+      <item>Definition</item>
+      <item>CoFixpoint</item>
+      <item>Fixpoint</item>
+      <item>Equations</item>
+    </list>
+
+    <!-- Assumption-introducing vernacular commands -->
+    <list name="kw_declaration">
+      <item>Axiom</item>
+      <item>Conjecture</item>
+      <item>Parameter</item>
+      <item>Parameters</item>
+      <item>Variable</item>
+      <item>Variables</item>
+      <item>Hypothesis</item>
+      <item>Hypotheses</item>
+    </list>
+
+    <!-- Inductive type commands -->
+    <list name="kw_inductive">
+      <item>Inductive</item>
+      <item>CoInductive</item>
+      <item>Variant</item>
+      <item>Record</item>
+      <item>Structure</item>
+      <item>Class</item>
+    </list>
+
+    <!-- Other vernacular commands (note: Set omitted; it is highlighted as a sort) -->
+    <list name="kw_vernacular">
+      <item>Program</item>
+      <item>Polymorphic</item>
+      <item>Cumulative</item>
+      <item>Fail</item>
+      <item>Universe</item>
+      <item>Proof</item>
+      <item>Qed</item>
+      <item>Defined</item>
+      <item>Admitted</item>
+      <item>Abort</item>
+      <item>Save</item>
+      <item>From</item>
+      <item>Require</item>
+      <item>Import</item>
+      <item>Export</item>
+      <item>Module</item>
+      <item>End</item>
+      <item>Section</item>
+      <item>Notation</item>
+      <item>Infix</item>
+      <item>Context</item>
+      <item>Unset</item>
+      <item>Print</item>
+      <item>About</item>
+      <item>Check</item>
+      <item>Compute</item>
+      <item>Eval</item>
+      <item>Goal</item>
+      <item>Search</item>
+      <item>MetaRocq</item>
+      <item>Run</item>
+      <item>Open</item>
+      <item>Close</item>
+      <item>Scope</item>
+      <item>Arguments</item>
+      <item>Instance</item>
+      <item>Global</item>
+      <item>Local</item>
+      <item>Opaque</item>
+      <item>Transparent</item>
+      <item>Hint</item>
+      <item>Declare</item>
+    </list>
+
+    <!-- Term-level keywords: binders, local definitions, structural keywords -->
+    <list name="kw_term">
+      <item>fun</item>
+      <item>forall</item>
+      <item>exists</item>
+      <item>exists2</item>
+      <item>let</item>
+      <item>fix</item>
+      <item>cofix</item>
+      <item>with</item>
+      <item>match</item>
+      <item>as</item>
+      <item>at</item>
+      <item>else</item>
+      <item>end</item>
+      <item>for</item>
+      <item>if</item>
+      <item>in</item>
+      <item>mod</item>
+      <item>return</item>
+      <item>then</item>
+      <item>where</item>
+      <item>of</item>
+    </list>
+
+    <!-- Universe sorts: highlighted as types -->
+    <list name="sorts">
+      <item>SProp</item>
+      <item>Prop</item>
+      <item>Set</item>
+      <item>Type</item>
+    </list>
+
+    <!-- Proof tactics -->
+    <list name="tactics">
+      <item>admit</item>
+      <item>all</item>
+      <item>apply</item>
+      <item>assert</item>
+      <item>assumption</item>
+      <item>auto</item>
+      <item>autounfold</item>
+      <item>case</item>
+      <item>clear</item>
+      <item>compute</item>
+      <item>constructor</item>
+      <item>contradiction</item>
+      <item>dependent</item>
+      <item>destruct</item>
+      <item>discriminate</item>
+      <item>do</item>
+      <item>eapply</item>
+      <item>eauto</item>
+      <item>easy</item>
+      <item>elim</item>
+      <item>exact</item>
+      <item>exfalso</item>
+      <item>firstorder</item>
+      <item>generalize</item>
+      <item>give_up</item>
+      <item>induction</item>
+      <item>injection</item>
+      <item>intro</item>
+      <item>intros</item>
+      <item>intuition</item>
+      <item>inversion</item>
+      <item>omega</item>
+      <item>pattern</item>
+      <item>pose</item>
+      <item>refine</item>
+      <item>reflexivity</item>
+      <item>remember</item>
+      <item>rename</item>
+      <item>repeat</item>
+      <item>replace</item>
+      <item>revert</item>
+      <item>rewrite</item>
+      <item>ring</item>
+      <item>set</item>
+      <item>simpl</item>
+      <item>specialize</item>
+      <item>split</item>
+      <item>subst</item>
+      <item>symmetry</item>
+      <item>tauto</item>
+      <item>trivial</item>
+      <item>try</item>
+      <item>unfold</item>
+    </list>
+
+    <!-- Builtin inductive types from the standard library -->
+    <list name="builtin_types">
+      <item>True</item>
+      <item>False</item>
+      <item>bool</item>
+      <item>nat</item>
+      <item>N</item>
+      <item>Z</item>
+      <item>positive</item>
+      <item>list</item>
+      <item>unit</item>
+      <item>option</item>
+      <item>string</item>
+      <item>prod</item>
+      <item>sum</item>
+      <item>and</item>
+      <item>or</item>
+      <item>not</item>
+      <item>eq</item>
+      <item>sig</item>
+      <item>sigT</item>
+    </list>
+
+    <!-- Builtin constructors -->
+    <list name="builtin_constructors">
+      <item>true</item>
+      <item>false</item>
+      <item>None</item>
+      <item>Some</item>
+      <item>left</item>
+      <item>right</item>
+      <item>nil</item>
+      <item>cons</item>
+      <item>eq_refl</item>
+      <item>O</item>
+      <item>S</item>
+      <item>tt</item>
+      <item>pair</item>
+      <item>conj</item>
+      <item>or_introl</item>
+      <item>or_intror</item>
+      <item>I</item>
+    </list>
+
+    <!-- Builtin functions from the standard library -->
+    <list name="builtin_functions">
+      <item>id</item>
+      <item>fst</item>
+      <item>snd</item>
+      <item>rev</item>
+      <item>fold_left</item>
+      <item>fold_right</item>
+      <item>skipn</item>
+      <item>firstn</item>
+      <item>mem</item>
+      <item>map</item>
+      <item>length</item>
+      <item>head</item>
+      <item>tail</item>
+      <item>nth_error</item>
+      <item>negb</item>
+      <item>andb</item>
+      <item>orb</item>
+      <item>implb</item>
+      <item>xorb</item>
+      <item>eqb</item>
+    </list>
+
+    <!-- ============================================================ -->
+    <!-- Contexts                                                      -->
+    <!-- ============================================================ -->
+
+    <contexts>
+
+      <context name="Normal" attribute="Normal Text" lineEndContext="#stay">
+
+        <!-- Comments: (* ... *) -->
+        <Detect2Chars attribute="Comment" context="Comment" char="(" char1="*"/>
+
+        <!-- Strings: "..." -->
+        <DetectChar attribute="String" context="String" char="&quot;"/>
+
+        <!-- Integer literals -->
+        <RegExpr attribute="DecVal" context="#stay" String="\b[0-9]+\b"/>
+
+        <!-- Operators: longer strings first to avoid partial matches -->
+        <StringDetect attribute="Operator" context="#stay" String="&lt;->"/>
+        <StringDetect attribute="Operator" context="#stay" String="&lt;=>"/>
+        <StringDetect attribute="Operator" context="#stay" String=":="/>
+        <StringDetect attribute="Operator" context="#stay" String="=>"/>
+        <StringDetect attribute="Operator" context="#stay" String="->"/>
+        <StringDetect attribute="Operator" context="#stay" String="&lt;-"/>
+        <StringDetect attribute="Operator" context="#stay" String="::"/>
+
+        <!-- | separator: enters context to detect constructor names (uppercase initial) -->
+        <DetectChar attribute="Operator" context="AfterPipe" char="|"/>
+
+        <!-- Sorts come first so Set is a sort, not a command -->
+        <keyword attribute="Data Type" context="#stay" String="sorts"/>
+
+        <!-- Builtin standard library types -->
+        <keyword attribute="Data Type" context="#stay" String="builtin_types"/>
+
+        <!-- Builtin constructors (true, false, Some, None, nil, cons, …) -->
+        <keyword attribute="Constant" context="#stay" String="builtin_constructors"/>
+
+        <!-- Builtin functions (negb, map, length, …) -->
+        <keyword attribute="Function" context="#stay" String="builtin_functions"/>
+
+        <!-- Definition keywords: highlight the name that follows as Function -->
+        <keyword attribute="Keyword" context="AfterDefinition" String="kw_definition"/>
+
+        <!-- Declaration keywords: highlight the name that follows as Annotation -->
+        <keyword attribute="Keyword" context="AfterDeclaration" String="kw_declaration"/>
+
+        <!-- Inductive keywords: highlight the name that follows as Data Type -->
+        <keyword attribute="Keyword" context="AfterInductive" String="kw_inductive"/>
+
+        <!-- Other vernacular commands (Proof, Qed, Require, …) -->
+        <keyword attribute="Keyword" context="#stay" String="kw_vernacular"/>
+
+        <!-- Term-level keywords (fun, forall, match, let, if, …) -->
+        <keyword attribute="Control Flow" context="#stay" String="kw_term"/>
+
+        <!-- Proof tactics (apply, destruct, simpl, …) -->
+        <keyword attribute="Built-in" context="#stay" String="tactics"/>
+
+      </context>
+
+      <!-- After a definition keyword: highlight the next identifier as a function name -->
+      <context name="AfterDefinition" attribute="Normal Text" lineEndContext="#pop">
+        <Detect2Chars attribute="Comment" context="Comment" char="(" char1="*"/>
+        <DetectSpaces/>
+        <RegExpr attribute="Function" context="#pop" String="[a-zA-Z_][a-zA-Z0-9_']*"/>
+        <RegExpr attribute="Normal Text" context="#pop" String="." lookAhead="true"/>
+      </context>
+
+      <!-- After a declaration keyword: highlight the next identifier as a declaration name -->
+      <context name="AfterDeclaration" attribute="Normal Text" lineEndContext="#pop">
+        <Detect2Chars attribute="Comment" context="Comment" char="(" char1="*"/>
+        <DetectSpaces/>
+        <RegExpr attribute="Annotation" context="#pop" String="[a-zA-Z_][a-zA-Z0-9_']*"/>
+        <RegExpr attribute="Normal Text" context="#pop" String="." lookAhead="true"/>
+      </context>
+
+      <!-- After an inductive keyword: highlight the next identifier as a type name -->
+      <context name="AfterInductive" attribute="Normal Text" lineEndContext="#pop">
+        <Detect2Chars attribute="Comment" context="Comment" char="(" char1="*"/>
+        <DetectSpaces/>
+        <RegExpr attribute="Data Type" context="#pop" String="[a-zA-Z_][a-zA-Z0-9_']*"/>
+        <RegExpr attribute="Normal Text" context="#pop" String="." lookAhead="true"/>
+      </context>
+
+      <!-- After |: uppercase-initial identifier = constructor; otherwise pop without consuming -->
+      <context name="AfterPipe" attribute="Normal Text" lineEndContext="#pop">
+        <DetectSpaces/>
+        <RegExpr attribute="Constant" context="#pop" String="[A-Z][a-zA-Z0-9_']*"/>
+        <RegExpr attribute="Normal Text" context="#pop" String="." lookAhead="true"/>
+      </context>
+
+      <!-- Nested block comments: (* can contain (* nested *) comments *) -->
+      <context name="Comment" attribute="Comment" lineEndContext="#stay">
+        <Detect2Chars attribute="Comment" context="Comment" char="(" char1="*"/>
+        <Detect2Chars attribute="Comment" context="#pop" char="*" char1=")"/>
+      </context>
+
+      <!-- Strings: "" is an escaped double-quote inside a string -->
+      <context name="String" attribute="String" lineEndContext="#stay">
+        <Detect2Chars attribute="Special Char" context="#stay" char="&quot;" char1="&quot;"/>
+        <DetectChar attribute="String" context="#pop" char="&quot;"/>
+      </context>
+
+    </contexts>
+
+    <!-- ============================================================ -->
+    <!-- Item data: names used in attribute= above, mapped to styles  -->
+    <!-- ============================================================ -->
+
+    <itemDatas>
+      <itemData name="Normal Text"  defStyleNum="dsNormal"      spellChecking="false"/>
+      <itemData name="Keyword"      defStyleNum="dsKeyword"     spellChecking="false"/>
+      <itemData name="Control Flow" defStyleNum="dsControlFlow" spellChecking="false"/>
+      <itemData name="Data Type"    defStyleNum="dsDataType"    spellChecking="false"/>
+      <itemData name="Constant"     defStyleNum="dsConstant"    spellChecking="false"/>
+      <itemData name="Function"     defStyleNum="dsFunction"    spellChecking="false"/>
+      <itemData name="Built-in"     defStyleNum="dsBuiltIn"     spellChecking="false"/>
+      <itemData name="Annotation"   defStyleNum="dsAnnotation"  spellChecking="false"/>
+      <itemData name="Operator"     defStyleNum="dsOperator"    spellChecking="false"/>
+      <itemData name="DecVal"       defStyleNum="dsDecVal"      spellChecking="false"/>
+      <itemData name="Special Char" defStyleNum="dsSpecialChar" spellChecking="false"/>
+      <itemData name="String"       defStyleNum="dsString"      spellChecking="false"/>
+      <itemData name="Comment"      defStyleNum="dsComment"     spellChecking="false"/>
+    </itemDatas>
+
+  </highlighting>
+
+  <general>
+    <comments>
+      <comment name="multiline" start="(*" end="*)" region="Comment"/>
+    </comments>
+    <keywords casesensitive="true"/>
+  </general>
+
+</language>

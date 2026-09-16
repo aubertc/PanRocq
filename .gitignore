@@ -1,2 +1,42 @@
+# LaTeX auxiliary files
+*.aux
+*.bbl
+*.bcf
+*.blg
+*.brf
+*.fdb_latexmk
+*.fls
+*.idx
+*.ilg
+*.ind
+*.lof
+*.log
+*.lot
+*.out
+*.toc
+*.synctex.gz
+*.nav
+*.snm
+*.vrb
+*.run.xml
+
+# LaTeX temporary files
+*.tmp
+*.bak
+*.swp
+*.swo
+
+# LaTeX build directories
+_minted-*/
+
+# Quarto build directories
 /.quarto/
+/site_libs/
+/index_files/
+/_book
+/docs
 **/*.quarto_ipynb
+
+# Other
+/.luarc.json
+.lia.cache

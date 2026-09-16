@@ -1,25 +1,59 @@
 project:
   type: book
+  resources:
+    - "Typst/*.pdf"
+
+lang: en
+from: markdown+emoji
 
 book:
   title: "PanRocq"
   author: "Florent Schaffhauser"
-  date: "15/09/2026"
+  site-url: https://matematiflo.github.io/PanRocq
+  repo-url: https://github.com/matematiflo/PanRocq
+  repo-actions: [issue]
+  date-format: "YYYY.MM.DD"
+  date: last-modified
+  downloads: [pdf]
+  favicon: logo.jpg
   chapters:
     - index.qmd
-    - intro.qmd
-    - summary.qmd
-    - references.qmd
-
-bibliography: references.bib
+    - PanRocq.qmd
+    - Usage.qmd
+    - Troubleshooting.qmd
 
 format:
   html:
     theme:
-      - cosmo
-      - brand
+      light: cosmo
+      dark: solar
+    css: styles.css
+    code-block-bg: true
+    code-copy: true
+    code-overflow: wrap
+    syntax-definitions:
+      - ./PanRocq.xml
+    highlight-style:
+      light: ./PanRocq.theme
+      dark: ./PanRocq-dark.theme
   pdf:
     documentclass: scrreprt
-
-
-
+    latex-tinytex: false
+    pdf-engine: lualatex
+    # code-block-bg: "#eef2f6"
+    code-block-border-left: true
+    # code-line-numbers: false
+    code-overflow: wrap
+    include-in-header:
+      text: |
+        \directlua{luaotfload.add_fallback("unicodefallbackinprose", {"NotoEmoji:mode=harf;"})}
+        \directlua{luaotfload.add_fallback("unicodefallbackincodeblocks", {"NotoEmoji:mode=harf;", "STIX Two Math:mode=harf;"})}
+        \setmainfont{Latin Modern Roman}[RawFeature={fallback=unicodefallbackinprose}]
+        \setmonofont{DejaVu Sans Mono}[RawFeature={fallback=unicodefallbackincodeblocks}]
+        \usepackage{fvextra}
+        \DefineVerbatimEnvironment{Highlighting}{Verbatim}{
+          breaklines, commandchars = \\\{\}
+        } % this is used to wrap lines in code blocks when rendering .qmd to .pdf
+    syntax-definitions:
+      - ./PanRocq.xml
+    highlight-style: ./PanRocq.theme

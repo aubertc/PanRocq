@@ -1,0 +1,62 @@
+# Troubleshooting
+
+## Quarto
+
+This book was Created using [Quarto 1.10.18](https://github.com/quarto-dev/quarto-cli)`. The LaTeX package [fvextra](https://ctan.org/pkg/fvextra) is used to wrap lines in code blocks when rendering `.qmd` to `.pdf`. This is set up as follows in the `_quarto.yml` file.
+
+```yml
+pdf:
+    documentclass: scrreprt
+    latex-tinytex: false
+    pdf-engine: lualatex
+    code-overflow: wrap
+    include-in-header:
+      text: |
+        \usepackage{fvextra}
+        \DefineVerbatimEnvironment{Highlighting}{Verbatim}{
+          breaklines, commandchars = \\\{\}
+        } % this is used to wrap lines in code blocks when rendering .qmd to .pdf
+    syntax-definitions:
+      - ./PanRocq.xml
+    highlight-style: ./PanRocq.theme
+```
+
+## Typst
+
+Occasionally, you might need to add a missing Unicode character to `Rocq.sublime-syntax`, for instance `U+227C` to render `≼` , which is `\preccurlyeq` in LaTeX ($\preccurlyeq$), and which can be added to the `operator` field of `Rocq.sublime-syntax`.
+
+```yml
+variables:
+  operator: '(<existing_syntax>|\u{227C})'
+```
+
+## Unicode
+
+Additional support is often needed to render Unicode characters properly in the pdf file. This is set up as follows in the `_quarto.yml` file. Note that a character such as `≼` should still be put behind backticks to render properly in our setup (`≼` is obtained by typing ``` `≼` ``` in the source file). Change `Latin Modern Roman` to `DejaVu Sans` or similar to be able to use such Unicode characters without backticks.
+
+```{.yml .code-overflow-scroll}
+pdf:
+    documentclass: scrreprt
+    latex-tinytex: false
+    pdf-engine: lualatex
+    include-in-header:
+      text: |
+        \directlua{luaotfload.add_fallback("unicodefallbackinprose", {"NotoEmoji:mode=harf;"})}
+        \directlua{luaotfload.add_fallback("unicodefallbackincodeblocks", {"NotoEmoji:mode=harf;", "STIX Two Math:mode=harf;"})}
+        \setmainfont{Latin Modern Roman}[RawFeature={fallback=unicodefallbackinprose}]
+        \setmonofont{DejaVu Sans Mono}[RawFeature={fallback=unicodefallbackincodeblocks}]
+```
+
+To have `:smile:` render as 😄 in the HTML version, add the following to `_quarto.yml`.
+
+```yml
+from: markdown+emoji
+```
+
+These will render differently in the pdf file, even if the emoji itself is copy-pasted and put behind backticks :upside_down_face: .
+
+## Code blocks background
+
+For convenience, the `"background-color"` field in the `PanRocq.theme` file has been set to `null`. It can be customized, by replacing `null` by `"#eef2f6"` or any other color. Alternatively, one can set `code-block-bg: "#eef2f6"` in `_quarto.yml` (but simply setting `code-block-bg: true` does not suffice to override `null` *in the pdf version* of the book).
+
+For more on Quarto's code highlighting features, visit <https://quarto.org/docs/output-formats/html-code.html#highlighting>.

@@ -1,0 +1,659 @@
+%YAML 1.2
+---
+name: Rocq
+file_extensions: [v]
+scope: source.rocq
+
+variables:
+  integer: '(-?\d+)'
+  ident: '(([a-zA-Z_]|[:alpha:])[a-zA-Z0-9_\u{2019}Σ'']*)'
+  qident: '{{ident}}(\.{{ident}})*'
+  b: '(?!'')\b'
+  colon: ':(?![<>=:])'
+  dot: '\.(?![a-zA-Z_(])'
+  accessor: '\.(?={{ident}})'
+  hilight_type_base: '\s*((\.?{{ident}}|->|)\s*)+'
+  hilight_type_guard: '(?:[,.:)}\]|&]|=>)'
+  hilight_type: '(?={{hilight_type_base}}{{hilight_type_guard}})'
+  hilight_type_line: '(?={{hilight_type_base}}({{hilight_type_guard}}|$))'
+  kw_term_binder: '(fun|forall(?![:alpha:])|exists|exists2)'
+  kw_term_definition: '(let|fix|cofix|with)'
+  kw_term_other: '(as|at|else|end|for|if|IF|in|match|mod|return|then|using|where)'
+  kw_term: '({{kw_term_binder}}|{{kw_term_definition}}|{{kw_term_other}})'
+  sort: '(SProp|Prop|Set|Type)'
+  lambdabox_cstr: 'E\.(tBox|tRel|tLambda|tLetIn|tApp|tConstruct|tConst|tCase|tProj|tFix|tCoFix|tPrim)'
+  term_constructor: '(tRel|tVar|tSort|tLambda|tLetIn|tProd|tApp|tConstruct|tConst|tInd|tProj|tCase|tFix|tCoFix|tPrim)'
+  type_constructor: '(type_Rel|type_Var|type_Sort|type_Lambda|type_App|type_Prod|type_LetIn|type_Cumul|type_Ind|type_Construct|type_Const|type_Case|type_Proj|type_Fix|type_CoFix)'
+  malfunction_defs: '(apply_function_or_nat|interoperability_firstorder_function|camlValue_to_CoqValue|CoqType_to_camlType|compile_malfunction(_pipeline)?|compile_value_mf|empty_locals)'
+  malfunction_inductive: '(camlType)'
+  malfunction_constructor: '(Mapply|Arrow|Rel|Adt|tt)'
+  wcbveval_rules: 'eval_((iota(_(block|sing))?)|beta|zeta|box|fix)'
+  metarocq_defs: '(reorder_cstrs_transformation|remove_params_optimization|build_template_program|eta_expand|template_to_pcuic_transform|erase_transform|guarded_to_unguarded_fix|rebuild_wf_env(_transform)?|optimize_prop_discr_optimization|inline_projections_optimization|constructors_as_blocks_transformation|lookup_constructor|lookup_inductive|proj_npars|cstr_nargs|proj_arg|constructor_isprop_pars_decl|inductive_isprop_and_pars|csubst|disable_prop_cases|with_prop_case|with_guarded_fix|with_constructor_as_block|closed|isprop_ind|optimize(_env)?|substl|on_snd|repeat|Subsingleton|is_erasableb|_isconv_(red|prog|args|fallback|full)|isconv_term|_reduce_stack|zip|stack_position|aname|validpos|eqb|eq_dec|le_dec|reference_impl_env|pos(?![:alpha:])|is_acyclic|leq_vertices|declared_cstr_levels|abs_pop_decls|abs_env(_init|_add_(u)?decl|_lookup|_level_mem|_leqb_level_n|_is_consistent|_guard)(_correct)?|on_udecl|abs_env_rel|infer(:!_)|_even|_odd|False_(oib|mib)|construct_cofix_discr|rarg|lookup_env|SN_to_WN|cstr_arity|atom|cunfold_fix|cunfold_cofix|rename|renaming_closed|inferring_typing|Universe.super|satisfies(?!0)|UnivExpr|rho|LevelSet(\.t)?|UnivConstraint(Set)?(\.t)?|valuation_mono|valuation_poly|Universes.is_propositional|ind_finite|ind_npars|ind_params|ind_universes|ind_variance|ind_bodies|ind_name|ind_indices|ind_sort|ind_type|ind_ctors(?!_)|proj_ind|proj_type|ind_projs|ind_kelim|variance_universes|sort_of_product|global_env_ext|unfold_fix|unfold_cofix|is_constructor|context_assumptions|iota_red|option_map|eq_universe|leq_universe|compare_universe|global_ext_constraints|cumul_Ind_univ|cumul_Construct_univ|RootedGraph|kername|mfixpoint|open_term|R_global_instance|V\.t|VSet.t|VSet.In|V.eq_dec|lsp0|lsp|acyclic|correct_labeling|option_get|DisjointAdd|remove(?!(_|[:alpha:]))|succs|source(?!([:alpha:]|['']|\u{2019}))|V(?![:alpha:])|weight|EdgeSet.t|EdgeSet.In|elim_sort_prop_ind|mdecl_at_i|context|global_declarations|UnivConstraintSet.t|Universe.t|ident|subst0|wf_universe(s?)|fix_guard|cofix_guard|wf_fix|wf_cofix|fix_context|dbody|dtype|decl_type|decl_name|decl_body|declared_constant|declared_projection|declared_inductive|declared_constructor|type_of_constructor|consistent_instance_ext|cst_body|cst_type|cst_universes|ind_type|ind_universes|case_predicate_context|it_mkLambda_or_LetIn|ci_ind|preturn|puinst|pparams|case_side_conditions|case_branch_typing)'
+  metarocq_inductive: '(cumul_predicate|WcbvFlags|eval(_primitive)?|firstorder_ind|stack_entry|positionR|position|on_global_univs|on_global_decls|info_result|typing_error|fix_lambda_app_view|value_head|value|All2_local_env|on_decl|pred1|satisfies0|For_all|Level(\.t)?|ConstraintType(\.t)?|FixOrCoFix|eq_binder_annot|conv_pb|inductive|valuation|projection|E\.term|SPath|EdgeOf|PathOf|monoid|Variance.t|recursivity_kind|allowed_eliminations|global_env|one_inductive_body|constructor_body|projection_body|constant_body|mutual_inductive_body|global_decl|universes_decl)'
+  metarocq_constructor: '({{wcbveval_rules}}|tLazy|tForce|mkInd|Reduction|Term|Args|Fallback|app_l|app_r|branches_hole|predicate_hole|Success|Error|ConstantDecl|InductiveDecl|psubst_vass|psubst_vdef|pred_app|pred_beta|pred_delta|pred_rel_def_unfold|pred_zeta|pred_rel_refl|infer_Lambda|infer_App|check_Cumul|infer_Rel|infer_prod_Prod|cumul_red_l|cumul_red_r|eq_Rel|eq_App|eq_Ind|eq_Lambda|lzero|level|lvar|lProp|lType|Fix|CoFix|Conv|Cumul|{{lambdabox_cstr}}|cumul_beta|cumul_zeta|cumul_rel|cumul_iota|cumul_fix|cumul_cofix_case|cumul_cofix_proj|cumul_delta|cumul_proj|cumul_Prod|cumul_Refl|cumul_Sym|cumul_Trans|cumul_App|cumul_Sort|cumul_Ind|IndRef|ConstructRef|VarRef|spath_refl|spath_step|IntoAny|IntoProp|pathOf_refl|pathOf_step|Eq(?![:alpha:])|Le(?![:alpha:]))'
+  metarocq_decl: '(guard|normalization|Obj.magic|admit)'
+  builtin_inductive: '(name|True|False|bool|nat|N(?![:alpha:])|Z(?![:alpha:])|positive|list|unit|option|vector|even|string|odd|Zpos|Transform.t|All|All2|Acc|cored|welltyped|axiom_free|value|term|whnf|whne|clos_refl_trans|{{metarocq_inductive}}|{{malfunction_inductive}})'
+  builtin_definition: '{{malfunction_defs}}|{{metarocq_defs}}|(id|fst|snd|rev|List.rev|fold_left|fold_right|skipn|firstn|mem|map|cardinal|Z.of_nat|_even|_odd|program|pre|post|transform|correctness|obseq|preservation|is_closed_context|is_open_term|length|head|tail|head_nz|nth_error|mkApps|impure|assumes_purity|apply_function_or_nat|function_or_nat|tProp|isArity|is_erasableb|binder_name)'
+  builtin_constructor: '{{malfunction_constructor}}|{{metarocq_constructor}}|{{term_constructor}}|{{type_constructor}}|(true|false|None|Some|left|right|nil|cons|eq_refl|wf_ext|wf|wf_local|eBox|S|O)'
+  builtin_decl: '{{metarocq_decl}}'
+  operator: '(!|%|&|&&|\*|\+|\u{2190}|\u{25B7}|\+\+|,,,|,,|,|\\in|\\union|<->|->|→|-|\.1(\|?)|\.2|\.\(|\.\.|/\\|/|::|:<|:=|:>|:|;;;|;;|⊢|\|\+arg>|\u{2200}|\u{2203}|\u{25A1}|\|-|\u{00AC}|\u{2026}|\u{22EE}|=>|(\u{2264}|=|<=+)((s|a)?)(\[((pb''|pb|Conv|Cumul)(,.*?)?)\])?|lift0\[(.*?)\]|<(?!=)|<-|<->|<:|<>|=s|=_D|\u{003D}|\u{25B9}(Π?)|\u{25C3}|\u{FE66}|\u{00D7}|\u{21DD}(\*?)|\u{21D2}|>|>->|>=|\?|\?=|@|\[|\\/|\^|\{|\|-|\|\||\}|~~|~|\|\+>|\u{222A}|\u{2229}|\u{2286}|\u{2282}|\u{2287}|\u{2283}|\u{2208}|\u{2209}|\u{2228}|\u{2227}|\u{2194}|\u{22A5}|\u{2260}|\u{2261}|\u{227C}|\u{2223}|\|[:alpha:])' 
+  bullet: '[*+-]+'
+  kw_declaration: '(Axiom|Conjecture|Parameter|Parameters|Variable|Variables|Hypothesis|Hypotheses)'
+  kw_definition: '(Theorem|Lemma|Remark|Fact|Corollary|Proposition|Example|Let|Definition|CoFixpoint|Fixpoint)'
+  kw_inductive: '(Inductive|CoInductive|Variant)'
+  kw_record: '(Record|Structure|Class)'
+  kw_notation: '(Notation|Infix)'
+  kw_qed: '(Qed|Defined|Admitted|Save|Abort)'
+  kw_require: '(From|Require|Import|Export)'
+  kw_metarocq: '(MetaRocq|Verified|Extraction|Run)'
+  kw_other: '(Proof|Print|About|Check|Compute|Goal|Require|{{kw_metarocq}})'
+  option: '(Extraction|Optimize)' 
+  extract_option: '(Constant(s)?|Inline|Inductive)' 
+  kw_command: '({{kw_declaration}}|{{kw_definition}}|{{kw_inductive}}|{{kw_record}}|{{kw_notation}}|{{kw_qed}}|{{kw_require}}|{{kw_other}})'
+  tactic: '(admit|apply|assert|assumption|auto|autounfold|case|clear|compute|constructor|contradiction|dependent|destruct|discriminate|do|eapply|eauto|easy''?|exfalso|pose|elim|exact|exists|firstorder|generalize|give_up|induction|injection|inversion|into|intros|intro|intuition|omega|pattern|refine|reflexivity|rename|remember|repeat|replace|revert|rewrite|ring|set|simpl|specialize|split|symmetry|subst|tauto|trivial|try|unfold)'
+  # command_other: '(About|Add|Admit|All|Arguments|Assumptions|Back|BackTo|Bind|Blacklist|Canonical|Cd|Check|Class|Classes|Close|Coercion|Coercions|Collection|Combined|Constant|Constraint|Constructor|Constructors|Context|Create|Cumulative|Declare|Delimit|Derive|Drop|End|Existential|Existing|Extract|Extraction|Fail|Field|File|Focus|Function|Functional|Generalizable|Global|Grab|Grammar|Graph|Guarded|Haskell|Heap|Hint|HintDb|Hints|Identity|If|Immediate|Implicit|Implicits|Include|Infix|Info|Initial|Inline|Inlined|Inspect|Instance|Inversion|Language|Left|Libraries|Library|Load|LoadPath|Local|Locate|Ltac|ML|Module|Modules|Monomorphic|Morphism|Next|No|NoInline|NonCumulative|Notation|OCaml|Obligation|Obligations|Opaque|Open|Optimize|Options|Parametric|Path|Paths|Polymorphic|Prenex|Preterm|Print|Printing|Profile|Program|Pwd|Quit|Rec|Record|Records|Recursive|Redirect|Reduction|Relation|Remove|Reset|Resolve|Restart|Rewrite|Right|Ring|Scheme|Scope|Search|SearchHead|SearchPattern|Separate|Set|Setoid|Section|Show|Signatures|Solve|Step|Strategy|Structure|Table|Tactic|Test|TestCompile|Time|Timeout|Transparent|Type|Typeclasses|Types|Undelimit|Undo|Unfocus|Unfocused|Unfold|Universe|Universes|Unset|Unshelve|Variant|View|Visibility)'
+
+contexts:
+  prototype:
+    - include: comment_begin
+    - match: (?={{dot}})
+      scope: punctuation.terminator.rocq
+      pop: true
+
+  # Illegal syntax
+  illegal_punct:
+    - match: '\)'
+      scope: invalid.illegal.stray-paren-end
+    - match: '\}'
+      scope: invalid.illegal.stray-brace-end
+    - match: '\]'
+      scope: invalid.illegal.stray-bracket-end
+  illegal_any:
+    - match: '\S'
+      scope: invalid.illegal
+
+  # Sentences
+  main:
+    - meta_include_prototype: false
+    - include: comment_begin
+    - match: '{{b}}{{kw_declaration}}{{b}}'
+      scope: keyword.declaration.rocq
+      push: declaration
+    - match: '#'
+      scope: keyword.definition.rocq
+      push: attributes
+    - match: '\bFail\b'
+      scope: keyword.definition.rocq
+    - match: '\bProgram\b'
+      scope: keyword.definition.rocq
+    - match: '\bPolymorphic\b'
+      scope: keyword.definition.rocq
+    - match: '\bCumulative\b'
+      scope: keyword.definition.rocq      
+    - match: '\b{{kw_definition}}\b'
+      scope: keyword.definition.rocq
+      push: definition
+    - match: '\bUniverse\b'
+      scope: keyword.definition.rocq
+    - match: '\bEquations\b'
+      scope: keyword.definition.rocq
+      push: equations
+    - match: '\b{{kw_require}}\b'
+      scope: keyword.definition.rocq      
+    - match: '\b{{kw_inductive}}\b'
+      scope: keyword.inductive.rocq
+      push: inductive_decl
+    - match: '\b{{kw_record}}\b'
+      scope: keyword.inductive.rocq
+      push: record_decl
+    - match: '\b{{kw_notation}}\b'
+      scope: keyword.notation.rocq
+      push: notation_decl
+    - match: '\bContext\b'
+      scope: keyword.rocq
+      push: binders_context
+    - match: '\b(Print|About){{b}}'
+      scope: keyword.rocq
+      push: ident
+    - match: '\b(Check|Compute|Eval){{b}}'
+      scope: keyword.rocq
+      push: term
+    - match: '\bProof{{b}}'
+      scope: keyword.rocq
+      push: proof
+    - match: '\bGoal{{b}}'
+      scope: keyword.rocq
+      push: [tactic, term]
+    - match: '\bRequire{{b}}'
+      scope: keyword.control.import.rocq
+      push: require
+    - match: '\b(Set|Unset){{b}}'
+      scope: keyword.rocq
+      push: setopt
+    - match: '\b(Recursive )?(Extraction){{b}}'
+      scope: keyword.rocq
+      push: extractopt 
+    - match: '\b(Verified )?(Extract){{b}}'
+      scope: keyword.rocq
+      push: extractopt  
+    - match: '\b{{kw_metarocq}}{{b}}'
+      scope: keyword.rocq
+    - match: '(\|)\s*({{ident}}){{b}}'
+      captures:
+        1: keyword.operator.rocq
+        2: entity.name.constructor.rocq
+      push: binders_type
+    - include: term
+    - match: '\b{{ident}}{{b}}'
+      scope: invalid.illegal.unknown-sentence.rocq
+      push: sentence_unknown
+  sentence_unknown:
+    - meta_scope: meta.sentence.rocq
+    - match: '(?=\b{{kw_command}}\b)'
+      pop: true
+  attributes:
+    - match: '\['
+      scope: punctuation.separator.rocq
+      set: in_attributes
+
+  in_attributes:
+    - match: '{{ident}}'
+      scope: keyword.attribute.rocq
+    - match: ','
+      scope: punctuation.separator.rocq
+    - match: '\('
+      scope: punctuation.separator.rocq
+      push: attribute_parens
+    - match: '\]'
+      scope: punctuation.separator.rocq
+      pop: true
+  attribute_parens:
+    - match: '\)'
+      scope: punctuation.separator.rocq
+      pop: true
+    - include: in_attributes
+  
+  setopt:
+    - match: '\b{{option}}{{b}}'
+      scope: keyword.rocq
+  extractopt:
+    - match: '\b{{extract_option}}{{b}}'
+      scope: keyword.rocq
+
+  # Proofs
+  proof:
+    - meta_include_prototype: false
+    - include: comment_begin
+    - match: '\.'
+      scope: punctuation.terminator.rocq
+      set: tactic
+    - match: '(?=\b{{kw_command}}\b)'
+      pop: true
+  tactic:
+    - meta_scope: meta.proof.rocq
+    - meta_include_prototype: false
+    - include: comment_begin
+    - match: '{{bullet}}'
+      scope: entity.name.section.rocq
+    - match: '\b{{kw_qed}}{{b}}'
+      scope: keyword.rocq
+      pop: true
+    - match: '(?=\b{{kw_command}}\b)'
+      pop: true
+    - match: '\b(repeat|try|do){{b}}'
+      scope: support.function.rocq
+    - match: '\b{{tactic}}{{b}}'
+      scope: support.function.rocq
+      push: tactic_term
+    - match: '{{ident}}'
+      scope: variable.function.rocq
+      push: tactic_term
+    - match: '{{integer}}'
+      scope: constant.numeric.integer
+    - match: ';'
+      scope: punctuation.separator.rocq
+      set: tactic_sequence
+    - match: '\['
+      scope: invalid.illegal.stray-bracket-begin
+    - match: '\('
+      scope: punctuation.section.parens.begin.rocq
+      push: tactic_paren
+    - include: illegal_punct
+  tactic_sequence:
+    - meta_scope: meta.proof.rocq
+    - meta_include_prototype: false
+    - match: '{{dot}}'
+      set: tactic
+    - match: '\['
+      scope: punctuation.section.braces.begin.rocq
+      push: tactic_local
+    - include: tactic
+  tactic_local:
+    - meta_scope: meta.proof.rocq
+    - meta_include_prototype: false
+    - match: '\]'
+      scope: punctuation.section.brackets.end.rocq
+      pop: true
+    - include: tactic
+  tactic_paren:
+    - meta_scope: meta.proof.rocq
+    - meta_include_prototype: false
+    - match: '\)'
+      scope: punctuation.section.parens.end.rocq
+      pop: true
+    - include: tactic
+  tactic_term:
+    - match: '(?=[;|)\]])'
+      pop: true
+    - include: term
+
+  # Other commands
+  require:
+    - match: '\b{{kw_require}}{{b}}'
+      scope: keyword.control.import.rocq
+    - match: '(?=\b{{kw_command}}{{b}})'
+      pop: true
+    - match: '{{ident}}'
+      scope: support.module.rocq
+
+  ident:
+    - match: '{{ident}}'
+      scope: variable.other.rocq
+    - include: illegal_any
+
+  # Terms
+  term:
+    # Punctuation
+    - match: '_(?![:alpha:])'
+      scope: keyword.rocq
+    - match: ',,+'
+      scope: keyword.operator.rocq
+    - match: ',|{{colon}}'
+      scope: punctuation.separator.rocq
+    - match: '\('
+      scope: punctuation.section.parens.begin.rocq
+      push: term_paren
+    - match: '''\('
+      scope: punctuation.section.parens.begin.rocq
+      push: term_paren
+    - match: '\{\|'
+      scope: punctuation.section.braces.begin.rocq
+      push: field_defs
+    - match: '\{'
+      scope: punctuation.section.braces.begin.rocq
+      push: term_brace
+    - match: '\['
+      scope: punctuation.section.brackets.begin.rocq
+      push: term_bracket
+    - match: '#\|'
+      scope: punctuation.section.hashpipe.begin.rocq
+      push: term_pipe
+    - match: '{{operator}}'
+      scope: keyword.operator.rocq
+    - match: '(?=\|)'
+      pop: true
+    # Keywords
+    - match: '\bmatch{{b}}'
+      scope: keyword.rocq
+      push: match_with
+    - match: '\b({{kw_term_binder}}){{b}}'
+      scope: keyword.rocq
+      push: binders
+    - match: '\b({{kw_term_definition}}){{b}}'
+      scope: keyword.rocq
+      push: definition_local
+    - match: '\b{{kw_term_other}}{{b}}'
+      scope: keyword.rocq
+    - match: '(?=^\s*{{kw_command}}\b)'
+      scope: keyword.rocq
+      pop: true
+    # Literals
+    - match: '{{integer}}'
+      scope: constant.numeric.integer
+    - include: string_begin
+    # Identifiers
+    - match: '({{ident}})(\.\()'
+      scope: variable.other.rocq
+      captures:
+        1: variable.other.rocq
+        2: variable.other.rocq
+      push: term_paren
+    - include: builtin
+    - match: '{{qident}}'
+      scope: variable.other.rocq
+    - match: '({{ident}})\.\(({{ident}})\)'
+      scope: variable.other.rocq      
+      captures:
+        1: support.module.rocq
+        2: punctuation.accessor.rocq
+    - match: '({{ident}})({{accessor}})'
+      scope: meta.namespace.rocq
+      captures:
+        1: support.module.rocq
+        2: punctuation.accessor.rocq
+    - match: '\.'
+      scope: punctuation.separator.rocq
+      pop: true
+    - match: ';'
+      scope: punctuation.terminator.rocq
+      pop: true
+    - match: '\)'
+      pop: true
+    - match: '(?=\})'
+      pop: true
+    - include: illegal_any
+  term_paren:
+    - match: '\)'
+      scope: punctuation.section.parens.end.rocq
+      pop: true
+    - include: term
+  term_brace_bracket:
+    - match: '\|\}'
+      scope: punctuation.section.braces.end.rocq
+      pop: true
+    - include: term
+  term_brace:
+    - match: '\}'
+      scope: punctuation.section.braces.end.rocq
+      pop: true
+    - include: term
+  term_bracket:
+    - match: '\]'
+      scope: punctuation.section.brackets.end.rocq
+      pop: true
+    - match: ';'
+      scope: punctuation.separator.rocq
+    - include: term
+  term_pipe:
+    - match: '\|'
+      scope: punctuation.section.pipe.end.rocq
+      pop: true
+    - include: term
+  term_doublequote:
+    - match: '"'
+      scope: punctuation.definition.string.end.rocq
+      pop: true
+    - include: term
+  match_with:
+    - match: '\bwith{{b}}'
+      scope: keyword.rocq
+      set: branches
+    - include: term
+  branches:
+    - match: '\|'
+      scope: keyword.operator.rocq
+      push: term
+    - match: 'end'
+      scope: keyword.operator.rocq
+      pop: true
+  type:
+    - include: builtin
+    - match: '({{ident}})({{accessor}})'
+      scope: meta.namespace.rocq
+      captures:
+        1: storage.type.rocq
+        2: punctuation.accessor.rocq
+    # - match: '(?!{{kw_term}}){{ident}}'
+    #  scope: storage.type.rocq
+    - include: term
+
+  declaration:
+    - match: '{{ident}}'
+      scope: entity.name.declaration.rocq
+      push: binders_type
+
+  notation_decl:
+    - include: string_begin
+    - match: ':='
+      scope: keyword.rocq
+      push: term
+
+  # Inductives
+  inductive_decl:
+    - match: '{{qident}}'
+      scope: entity.name.inductive.rocq
+      push: inductive
+    - match: '"'
+      scope: punctuation.definition.string.begin.rocq
+      push: string_body
+    - include: inductive
+
+
+  inductive:
+    - match: ':='
+      scope: keyword.operator.rocq
+      push: constructors
+    # - match: '(?!{{kw_term}}){{ident}}'
+    #  scope: entity.name.constructor.rocq
+    - match: '{{colon}}'
+      scope: punctuation.separator.rocq
+      push: inductive_type
+    - include: binders_type
+
+  inductive_type:
+    - match: '\bwith{{b}}'
+      scope: keyword.rocq
+      push: inductive_decl
+    - match: '\|'
+      scope: keyword.operator.rocq
+      pop: true
+    - match: '(?=:=)'
+      pop: true
+    - include: type
+
+  constructors:
+    - match: '\|'
+      scope: keyword.operator.rocq
+    - match: '\bwith{{b}}'
+      scope: keyword.rocq
+      pop: true
+    - match: '\b{{qident}}\b'
+      scope: entity.name.constructor.rocq
+      push: binders_type
+
+  record_decl:
+    - match: '{{qident}}'
+      scope: entity.name.inductive.rocq
+      push: record
+  
+  record:
+    - match: ':='
+      scope: keyword.operator.rocq
+      push: projections
+    - match: '{{colon}}'
+      scope: punctuation.separator.rocq
+      push: record_type
+    - include: binders_type
+  
+  record_type:
+    - match: '\bwith{{b}}'
+      scope: keyword.rocq
+      push: record_decl
+    - match: '(?=:=)'
+      pop: true
+    - include: type
+
+  projections:
+    - match: '\b{{ident}}\b'
+      scope: entity.name.constructor.rocq
+    - match: '\{'
+      scope: punctuation.section.braces.begin.rocq
+      push: fields
+  
+  fields:
+    - match: '\b{{ident}}\b'
+      scope: entity.name.function.rocq
+    - match: '{{colon}}'
+      scope: punctuation.separator.rocq
+      push: term
+    - match: '\}'
+      scope: punctuation.section.braces.end.rocq
+      pop: true
+
+  field_defs:
+    - match: '\b{{ident}}\b'
+      scope: entity.name.function.rocq
+    - match: ':='
+      scope: punctuation.separator.rocq
+      push: term
+    - match: '\|\}'
+      scope: punctuation.section.braces.end.rocq
+      pop: true
+
+
+  binders_type:
+    - match: '\('
+      scope: punctuation.section.parens.begin.rocq
+      push: binder_parens
+    - match: '\{'
+      scope: punctuation.section.braces.begin.rocq
+      push: binder_brace
+    - match: 'of'
+      scope: keyword.operator.rocq
+      set: term
+    - match: '\b{{ident}}\b'
+      scope: variable.parameter.rocq
+    - match: '{{colon}}'
+      scope: punctuation.separator.rocq
+      set: term
+    - match: '\|'
+      scope: keyword.operator.rocq
+      pop: true
+
+  # Binders and definitions
+  definition:
+    # - include: decl_terminator
+    - match: '\b{{qident}}\b'
+      scope: entity.name.function.rocq
+      push: definition_aux
+    - match: \bwith{{b}}'
+      scope: keyword.operator.rocq
+    # - match: '(?=\S)'
+    #  set: binders
+
+  definition_aux:
+   - match: ':='
+     scope: keyword.operator.rocq
+     set: term
+   - include: binders_type
+
+  definition_local:
+    - include: decl_terminator
+    - match: '{{ident}}'
+      scope: variable.other.rocq
+      set: binders
+    - match: '(?=\S)'
+      set: binders
+
+  equations:
+    # - include: decl_terminator
+    - match: '\b{{qident}}\b'
+      scope: entity.name.function.rocq
+      set: equations_aux
+
+  equations_aux:
+   - match: ':='
+     scope: keyword.operator.rocq
+     set: equations_def
+   - include: binders_type
+
+  equations_def:
+    - match: '{{ident}}'
+      scope: entity.name.function.rocq
+      push: term
+    - match: '\|'
+      scope: keyword.operator.rocq
+    - match: '\b{{qident}}\b'
+      scope: entity.name.constructor.rocq
+      push: binders_type
+
+  binders_context:
+    - match: '\{'
+      scope: punctuation.section.braces.begin.rocq
+      push: binder_brace
+    - match: '\('
+      scope: punctuation.section.parens.begin.rocq
+      push: binder_parens
+
+  binder_parens:
+    - match: '{{ident}}'
+      scope: variable.parameter.rocq
+    - match: '{{colon}}'
+      scope: punctuation.separator.rocq
+      set: term_paren
+
+  binder_brace:
+    - match: '{{ident}}'
+      scope: variable.parameter.rocq
+    - match: '{{colon}}'
+      scope: punctuation.separator.rocq
+      set: term_brace
+
+  binders:
+    - match: '{{colon}}{{hilight_type}}'
+      scope: punctuation.separator.rocq
+      set: decl_type_hilight
+    - match: '{{colon}}'
+      scope: punctuation.separator.rocq
+      set: decl_type
+    - match: '{{ident}}'
+      scope: variable.parameter.rocq
+    - include: decl_terminator
+    - match: '\('
+      scope: punctuation.section.parens.begin.rocq
+      push: [term_paren, binders]
+
+  decl_type_hilight:
+    - include: decl_terminator
+    - match: '_'
+      scope: keyword.rocq
+    - include: type
+
+  decl_type:
+    - include: builtin
+    - include: decl_terminator
+    - include: term
+
+  decl_terminator:
+    - match: '(?=\b{{kw_term}}\b|\b{{kw_command}}\b|{{hilight_type_guard}})'
+      pop: true
+
+  # Builtins
+  builtin:
+    - match: '\b{{sort}}\b'
+      scope: support.type.rocq
+    - match: '\b{{builtin_definition}}{{b}}'
+      scope: entity.name.function.rocq
+    - match: '\b{{builtin_inductive}}{{b}}'
+      scope: entity.name.inductive.rocq
+    - match: '\b{{builtin_constructor}}\b'
+      scope: entity.name.constructor.rocq
+    - match: '\b{{builtin_decl}}\b'
+      scope: entity.name.declaration.rocq
+
+  # Comments
+  comment_begin:
+    - match: '\(\*'
+      scope: punctuation.definition.comment.begin.rocq
+      push: comment_body
+  comment_body:
+    - meta_scope: comment.block.rocq
+    - include: comment_begin
+    - include: string_begin
+    - match: '\*\)'
+      scope: punctuation.definition.comment.end.rocq
+      pop: true
+
+  # Strings
+  string_begin:
+    - match: '"'
+      scope: punctuation.definition.string.begin.rocq
+      push: string_body
+  string_body:
+    - meta_scope: string.quoted.double.rocq
+    - match: '""'
+      scope: constant.character.escape.rocq
+    - match: '"'
+      scope: punctuation.definition.string.end.rocq
+      pop: true
+    # - include: term_doublequote

@@ -1,0 +1,54 @@
+---
+format:
+  html:
+    other-links:
+      - text: Exercise sheet (Typst)
+        href: ./Typst/Exercises.pdf
+        icon: file-earmark-pdf
+---
+
+# Usage
+
+## Quarto {#sec-usage-quarto}
+
+### Rendering
+
+```rocq
+Definition negb (b : bool) : bool :=
+  match b with
+  | true  => false
+  | false => true
+  end.
+```
+
+### Source
+
+````default
+```rocq
+Definition negb (b : bool) : bool :=
+  match b with
+  | true  => false
+  | false => true
+  end.
+```
+````
+
+## Typst {#sec-usage-typst}
+
+### Rendering
+
+When you compile your `.typ` file, the code blocks will be rendered using PanRocq in the `.pdf` file. As an example, you can look at this [exercise sheet](https://matematiflo.github.io/PanRocq/Typst/Exercises.pdf).
+
+```bash
+typst c Typst/Exercises.typ
+```
+
+### Source
+
+````default
+```rocq
+Inductive list (A : Type) : Type :=
+| nil  : list A
+| cons : A → list A → list A.
+```
+````
